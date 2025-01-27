@@ -17,9 +17,11 @@ public interface UserService {
 
     User findByUsername(String username);
 
+    User findById(Long id);
+
     List<User> getAllUsers();
 
-    boolean createUser(@ModelAttribute User user, @RequestParam(value = "role") Set<Role> roles);
+    boolean createUser(@ModelAttribute User user);
 
     User getEditUserPage(@PathVariable Long id);
 

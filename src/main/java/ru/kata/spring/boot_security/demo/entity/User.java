@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -20,14 +21,10 @@ public class User implements UserDetails {
     private String username;
     @Column(name = "last_name")
     private String lastName;
-
     private byte age;
     @Column(unique = true)
     private String email;
-
     private String password;
-    @Transient
-    private String passwordConfirm;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -49,7 +46,6 @@ public class User implements UserDetails {
                 String password,
                 String email) {
         this.username = username;
-        this.passwordConfirm = passwordConfirm;
         this.password = password;
         this.email = email;
         this.age = age;
@@ -116,14 +112,6 @@ public class User implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
     }
 
     @Override

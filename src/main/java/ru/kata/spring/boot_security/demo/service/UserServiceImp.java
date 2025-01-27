@@ -19,6 +19,7 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,11 @@ public class UserServiceImp implements UserDetailsService, UserService {
         return userRepository.findByEmail(email);
     }
 
+    public User findById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
+    }
+
     @Override
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -47,9 +53,8 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
     @Override
-    public boolean createUser(@ModelAttribute User user, @RequestParam(value = "role") Set<Role> roles) {
+    public boolean createUser(@ModelAttribute User user) {
         if (userRepository.findByUsername(user.getEmail()) == null) {
-            user.setRoles(roles);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;
@@ -87,6 +92,7 @@ public class UserServiceImp implements UserDetailsService, UserService {
     public boolean deleteUser(Long id) {
         return userRepository.findById(id)
                 .map(user -> {
+                    user.setRoles(null);
                     userRepository.delete(user);
                     return true;
                 })
