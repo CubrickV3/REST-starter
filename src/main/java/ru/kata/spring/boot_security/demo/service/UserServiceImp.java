@@ -51,7 +51,6 @@ public class UserServiceImp implements UserDetailsService, UserService {
     @Override
     public boolean createUser(User user) {
         if (userRepository.findByUsername(user.getEmail()) == null) {
-            user.setRoles(user.getRoles());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;

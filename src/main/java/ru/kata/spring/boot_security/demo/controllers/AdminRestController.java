@@ -46,12 +46,8 @@ public class AdminRestController {
     @PostMapping("/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> createUser(@RequestBody User user) {
-        try {
-            userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create user: " + e.getMessage());
-        }
+        userService.createUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
     @PutMapping("/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
