@@ -10,11 +10,12 @@ import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 public class AdminRestController {
 
     private UserService userService;
@@ -43,14 +44,18 @@ public class AdminRestController {
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @PostMapping("/users")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        userService.createUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> createUser(@RequestBody User user) {
+        try {
+            userService.createUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create user: " + e.getMessage());
+        }
     }
     @PutMapping("/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
+    public ResponseEntity<HttpStatus> updateUser(@RequestBody User user) {
         final boolean update = userService.editUser(user);
         return update
                 ? new ResponseEntity<>(HttpStatus.OK)
@@ -59,7 +64,7 @@ public class AdminRestController {
 
     @DeleteMapping("/users/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
         final boolean deleted = userService.deleteUser(id);
         return deleted
                 ? new ResponseEntity<>(HttpStatus.OK)

@@ -1,7 +1,7 @@
-const urlAdmin = '/api/admin';
+const urlAdmin = '/api';
 
 async function getRoles() {
-    return await fetch("/api/admin/roles")
+    return await fetch("/api/roles")
         .then(response => response.json());
 }
 
@@ -30,7 +30,7 @@ function getUsersData() {
 function loadTable(listUsers) {
     let el = "";
     for (let user of listUsers) {
-        el +=`
+        el += `
         <tr>
           <td>${user.id}</td>
           <td>${user.username}</td>
@@ -61,22 +61,24 @@ document.getElementById("newUserForm").addEventListener('submit', (e) => {
     let rolesNewUser = [];
     for (let i = 0; i < role.options.length; i++) {
         if (role.options[i].selected) {
-            rolesNewUser.push({id: role.options[i].value, roleName: 'ROLE_' + role.options[i].innerHTML});
+            rolesNewUser.push({id: role.options[i].value, roleName: "ROLE_" + role.options[i].innerHTML});
         }
     }
-    fetch('api/admin/users', {
+
+    fetch('api/users', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify({
-            username: document.getElementById("first_name").value,
-            lastName: document.getElementById("last_name").value,
-            age: document.getElementById("age").value,
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value,
-            roles: rolesNewUser
-        })
+                username: document.getElementById("first_name").value,
+                lastName: document.getElementById("last_name").value,
+                age: document.getElementById("age").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                roles: rolesNewUser
+            }
+        )
     }).then((response) => {
         if (response.ok) {
             getUsersData()

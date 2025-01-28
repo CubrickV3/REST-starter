@@ -17,13 +17,9 @@ public interface UserService {
 
     User findByUsername(String username);
 
-    User findById(Long id);
-
     List<User> getAllUsers();
 
-    boolean createUser(@ModelAttribute User user);
-
-    User getEditUserPage(@PathVariable Long id);
+    boolean createUser(User user);
 
     boolean editUser(@ModelAttribute("user") User user);
 

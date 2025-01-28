@@ -12,38 +12,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements UserDetailsService, UserService {
 
+    private final RoleRepository roleRepository;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     @Lazy
     public UserServiceImp(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     public User findByUsername(String email) {
         return userRepository.findByEmail(email);
-    }
-
-    public User findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
     }
 
     @Override
@@ -53,20 +49,15 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
     @Override
-    public boolean createUser(@ModelAttribute User user) {
+    public boolean createUser(User user) {
         if (userRepository.findByUsername(user.getEmail()) == null) {
+            user.setRoles(user.getRoles());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;
         } else {
             return false;
         }
-    }
-
-    @Override
-    public User getEditUserPage(@PathVariable Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        return user;
     }
 
     @Override
