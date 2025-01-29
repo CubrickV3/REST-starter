@@ -35,6 +35,15 @@ public class AdminRestController {
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        final User user = userService.getUserById(id);
+        return user != null
+                ? new ResponseEntity<>(user, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/roles")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Role>> getRoles() {

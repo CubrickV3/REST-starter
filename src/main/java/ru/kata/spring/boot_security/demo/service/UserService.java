@@ -19,6 +19,8 @@ public interface UserService {
 
     List<User> getAllUsers();
 
+    User getUserById(Long id);
+
     boolean createUser(User user);
 
     boolean editUser(@ModelAttribute("user") User user);

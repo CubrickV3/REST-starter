@@ -49,8 +49,19 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
     @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+
+    @Override
     public boolean createUser(User user) {
         if (userRepository.findByUsername(user.getEmail()) == null) {
+            Set<Role> roles = new HashSet<>();
+            for (Role role : user.getRoles()) {
+                roles.add(roleRepository.getOne(role.getId()));
+            }
+            user.setRoles(roles);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;
@@ -60,7 +71,7 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
     @Override
-    public boolean editUser(@ModelAttribute("user") User user) {
+    public boolean editUser(User user) {
         if (userRepository.findByUsername(user.getEmail()) == null) {
             User editUser = userRepository.findById(user.getId()).orElse(null);
             editUser.setUsername(user.getUsername());
