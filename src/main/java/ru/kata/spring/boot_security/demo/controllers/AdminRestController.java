@@ -10,9 +10,7 @@ import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -26,8 +24,9 @@ public class AdminRestController {
         this.userService = userService;
         this.roleService = roleService;
     }
-    @GetMapping("/users")
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         final List<User> users = userService.getAllUsers();
         return users != null && !users.isEmpty()
@@ -35,8 +34,8 @@ public class AdminRestController {
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/users/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/users/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         final User user = userService.getUserById(id);
         return user != null
@@ -44,22 +43,24 @@ public class AdminRestController {
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/roles")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/roles")
     public ResponseEntity<List<Role>> getRoles() {
         final List<Role> roles = roleService.findAll();
         return roles != null
                 ? new ResponseEntity<>(roles, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    @PostMapping("/users")
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/users")
     public ResponseEntity<String> createUser(@RequestBody User user) {
         userService.createUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    @PutMapping("/users")
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/users")
     public ResponseEntity<HttpStatus> updateUser(@RequestBody User user) {
         final boolean update = userService.editUser(user);
         return update
@@ -67,8 +68,8 @@ public class AdminRestController {
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/users/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
         final boolean deleted = userService.deleteUser(id);
         return deleted

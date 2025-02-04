@@ -34,4 +34,4 @@ async function fetchCurretUser() {
     }
 }
 
-fetchCurretUser();
+document.addEventListener('DOMContentLoaded', fetchCurretUser);

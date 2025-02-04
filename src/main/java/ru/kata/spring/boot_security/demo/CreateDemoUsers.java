@@ -35,7 +35,7 @@ public class CreateDemoUsers {
         Set<Role> roleUser = new HashSet<>();
         roleAdmin.add(adminRole);
         roleUser.add(userRole);
-        User admin = new User("admin","adm Sec-name", (byte) 20,
+        User admin = new User("admin", "adm Sec-name", (byte) 20,
                 "$2y$10$yiInRFChgGpPRJlpWh21pONMAhrC39BiiDWwDEWOWuujsB5uBu/8W",
                 "admin@mail.com");
         User user = new User("user", "user Sec-name", (byte) 20,

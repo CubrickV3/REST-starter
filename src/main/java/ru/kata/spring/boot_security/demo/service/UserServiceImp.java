@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,16 +11,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
-import java.util.*;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +41,11 @@ public class UserServiceImp implements UserDetailsService, UserService {
 
     public User findByUsername(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User oneUser(Principal principal) {
+        return (User) ((Authentication) principal).getPrincipal();
     }
 
     @Override
@@ -101,13 +107,12 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = findByUsername(email);
         if (user == null) {
             throw new UsernameNotFoundException(email);
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
+        return user;
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {

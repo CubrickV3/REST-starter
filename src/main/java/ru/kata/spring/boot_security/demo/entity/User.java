@@ -30,13 +30,10 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    public User() {
-    }
+    @Transient
+    private User user;
 
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
+    public User() {
     }
 
     public User(String username,
@@ -120,7 +117,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends GrantedAuthority>) getRoles();
+        return getRoles();
     }
 
     @Override
